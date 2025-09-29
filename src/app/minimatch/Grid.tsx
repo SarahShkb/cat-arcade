@@ -8,6 +8,7 @@ const Grid = ({ difficulty }: GridType) => {
   const rows = difficulty ? difficultyLevelSize[difficulty].ROW : 0;
   const columns = difficulty ? difficultyLevelSize[difficulty].COL : 0;
   const tilesNum = rows * columns;
+  const allImagesNum = 18;
 
   const [imageUrls, setImageUrls] = useState<string[]>([]);
 
@@ -30,19 +31,24 @@ const Grid = ({ difficulty }: GridType) => {
     const tempImageUrls: string[] = new Array(tilesNum);
     const urlsToBeRevoked: string[] = [];
     const indexes = Array.from(Array(tilesNum).keys());
+    const exsistingCatImageIndexes = Array.from(Array(allImagesNum).keys());
 
-    const getCatImage = async () => {
-      const res = await fetch("https://cataas.com/cat");
-      const blob = await res.blob();
-      const url = URL.createObjectURL(blob);
-      urlsToBeRevoked.push(url);
+    const getCatImage = async (exsistingCatImageIndexes: number[]) => {
+      const baseImageUrl = `cat-images/cat-`;
+      const imageNumber = Math.floor(
+        Math.random() * exsistingCatImageIndexes.length
+      );
+      const url = `${baseImageUrl}${
+        exsistingCatImageIndexes[imageNumber] + 1
+      }.svg`;
+      exsistingCatImageIndexes.splice(imageNumber, 1);
       return url;
     };
 
     const assignCatImage = async () => {
       await Promise.all(
         Array.from({ length: tilesNum / 2 }, async () => {
-          const url = await getCatImage();
+          const url = await getCatImage(exsistingCatImageIndexes);
           assignTwoRandomTiles(url, indexes, tempImageUrls);
         })
       );
@@ -55,8 +61,6 @@ const Grid = ({ difficulty }: GridType) => {
       urlsToBeRevoked.forEach((url) => URL.revokeObjectURL(url));
     };
   }, []);
-
-  console.log(imageUrls);
 
   return (
     <div className="flex justify-center items-center w-full sm:mt-10">
