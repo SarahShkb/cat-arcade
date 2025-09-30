@@ -65,7 +65,7 @@ const Grid = ({ difficulty }: GridType) => {
   return (
     <div className="flex justify-center items-center w-full sm:mt-10">
       <div
-        className="grid gap-0 max-w-sm sm:max-w-md lg:max-w-3xl"
+        className="grid gap-1 rounded border border-2 p-1 border-white max-w-sm sm:max-w-md lg:max-w-3xl"
         style={{
           gridTemplateColumns: `repeat(${columns}, 1fr)`,
         }}
