@@ -1,14 +1,77 @@
 import { useState } from "react";
 import { TileType } from "./types";
 import { motion } from "framer-motion";
+import { useGameStore } from "./useGameStore";
 
-const Tile = ({ imageUrl }: TileType) => {
-  const [isFlipped, setIsFlipped] = useState<boolean>(false);
+const Tile = ({ imageUrl, code, index }: TileType) => {
   const [isAnimating, setIsAnimating] = useState<boolean>(false);
+  const { currentTileCode, flipped, found } = useGameStore();
   const handleFlip = () => {
-    if (!isAnimating) {
-      setIsFlipped(!isFlipped);
-      setIsAnimating(true);
+    if (!found[code]) {
+      if (!isAnimating) {
+        setIsAnimating(true);
+        // first tile selected
+        if (currentTileCode < 0) {
+          console.log("first tile");
+          useGameStore.setState((state) => {
+            const tempFlippedState = [...state.flipped];
+            tempFlippedState[index] = true;
+
+            return {
+              ...state,
+              currentTileCode: code,
+              currentTileIndex: index,
+              flipped: tempFlippedState,
+            };
+          });
+          // second tile (the match) selected
+        } else {
+          // match found
+          if (code === currentTileCode) {
+            useGameStore.setState((state) => {
+              const tempFoundState = [...state.found];
+              tempFoundState[code] = true;
+
+              const tempFlippedState = [...state.flipped];
+              tempFlippedState[index] = !tempFlippedState[index];
+
+              return {
+                ...state,
+                found: tempFoundState,
+                flipped: tempFlippedState,
+                currentTileCode: -1,
+                currentTileIndex: -1,
+              };
+            });
+          } else {
+            // match not found
+            useGameStore.setState((state) => {
+              const tempFlippedState = [...state.flipped];
+              tempFlippedState[index] = true;
+              tempFlippedState[state.currentTileIndex] = false;
+
+              return {
+                ...state,
+                flipped: tempFlippedState,
+                currentTileCode: -1,
+                currentTileIndex: -1,
+              };
+            });
+            setTimeout(() => {
+              useGameStore.setState((state) => {
+                const tempFlippedState = [...state.flipped];
+                tempFlippedState[index] = false;
+                tempFlippedState[state.currentTileIndex] = false;
+
+                return {
+                  ...state,
+                  flipped: tempFlippedState,
+                };
+              });
+            }, 1000);
+          }
+        }
+      }
     }
   };
   return (
@@ -19,7 +82,7 @@ const Tile = ({ imageUrl }: TileType) => {
       <motion.div
         className="flip-card-inner w-full h-full"
         initial={false}
-        animate={{ rotateY: isFlipped ? 180 : 360 }}
+        animate={{ rotateY: flipped[index] ? 180 : 360 }}
         transition={{ duration: 0.3 }}
         onAnimationComplete={() => setIsAnimating(false)}
       >
