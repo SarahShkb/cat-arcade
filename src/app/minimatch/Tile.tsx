@@ -2,20 +2,23 @@ import { useState } from "react";
 import { TileType } from "./types";
 import { motion } from "framer-motion";
 import { useGameStore } from "./useGameStore";
+import { s } from "framer-motion/client";
 
 const Tile = ({ imageUrl, code, index }: TileType) => {
   const [isAnimating, setIsAnimating] = useState<boolean>(false);
-  const { currentTileCode, flipped, found } = useGameStore();
+  const { currentTileCode, flipped, found, currentTileIndex } = useGameStore();
+  console.log(flipped);
   const handleFlip = () => {
     if (!found[code]) {
       if (!isAnimating) {
         setIsAnimating(true);
         // first tile selected
         if (currentTileCode < 0) {
-          console.log("first tile");
           useGameStore.setState((state) => {
             const tempFlippedState = [...state.flipped];
             tempFlippedState[index] = true;
+
+            console.log(`first index added: ${index}`);
 
             return {
               ...state,
@@ -33,7 +36,7 @@ const Tile = ({ imageUrl, code, index }: TileType) => {
               tempFoundState[code] = true;
 
               const tempFlippedState = [...state.flipped];
-              tempFlippedState[index] = !tempFlippedState[index];
+              tempFlippedState[index] = true;
 
               return {
                 ...state,
@@ -48,24 +51,24 @@ const Tile = ({ imageUrl, code, index }: TileType) => {
             useGameStore.setState((state) => {
               const tempFlippedState = [...state.flipped];
               tempFlippedState[index] = true;
-              tempFlippedState[state.currentTileIndex] = false;
 
               return {
                 ...state,
                 flipped: tempFlippedState,
-                currentTileCode: -1,
-                currentTileIndex: -1,
               };
             });
             setTimeout(() => {
               useGameStore.setState((state) => {
                 const tempFlippedState = [...state.flipped];
                 tempFlippedState[index] = false;
+                console.log(`first tile index: ${state.currentTileIndex}`);
                 tempFlippedState[state.currentTileIndex] = false;
 
                 return {
                   ...state,
                   flipped: tempFlippedState,
+                  currentTileCode: -1,
+                  currentTileIndex: -1,
                 };
               });
             }, 1000);
