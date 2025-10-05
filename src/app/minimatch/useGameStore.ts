@@ -8,10 +8,12 @@ export const useGameStore = create<GameStateType>()(
         found : [], 
         currentTileCode: -1,
         currentTileIndex: -1,
+        win: false,
         setTilesNum: (num: number) => set({
             tilesNum: num,
             flipped: Array(num).fill(false),
             found: Array(Math.floor(num/2)).fill(false),
-        })
+        }),
+        setWin: () => set({ win: true})
       }),
 )

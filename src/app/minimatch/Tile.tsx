@@ -74,7 +74,9 @@ const Tile = ({ imageUrl, code, index }: TileType) => {
   };
   return (
     <div
-      className="border border-gray rounded-sm w-8 md:w-12 lg:w-16 h-8 md:h-12 lg:h-16 bg-white cursor-pointer flip-card"
+      className={`border border-gray rounded-sm w-8 md:w-12 lg:w-16 h-8 md:h-12 lg:h-16 bg-white ${
+        !flipped[index] && "cursor-pointer"
+      } flip-card`}
       onClick={handleFlip}
     >
       <motion.div

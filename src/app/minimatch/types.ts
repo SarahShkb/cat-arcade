@@ -11,10 +11,12 @@ export type TileType = {
 }
 
 export type GameStateType = {
+    win: boolean;
     tilesNum: number;
     flipped : boolean[];
     found : boolean[];
     currentTileIndex: number;
     currentTileCode: number;
-    setTilesNum: (num: number) => void
+    setTilesNum: (num: number) => void,
+    setWin: () => void
 }

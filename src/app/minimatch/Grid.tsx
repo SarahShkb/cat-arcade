@@ -9,8 +9,8 @@ const Grid = ({ difficulty }: GridType) => {
   const rows = difficulty ? difficultyLevelSize[difficulty].ROW : 0;
   const columns = difficulty ? difficultyLevelSize[difficulty].COL : 0;
   const tilesNum = rows * columns;
-  //useGameStore((state) => state.setTilesNum(tilesNum));
   const allImagesNum = 18;
+  const win = useGameStore((state) => state.win);
 
   const [imageUrls, setImageUrls] = useState<string[]>([]);
   const [codes, setCodes] = useState<number[]>([]);
@@ -73,30 +73,46 @@ const Grid = ({ difficulty }: GridType) => {
       setImageUrls([...tempImageUrls]);
       setCodes([...catImageCodes]);
     };
-
     assignCatImage();
+
+    const unsub = useGameStore.subscribe(
+      (state) => state.found,
+      (newFound: boolean[]) => {
+        if (newFound.every(Boolean)) {
+          useState.getState().setWin();
+        }
+      }
+    );
 
     return () => {
       urlsToBeRevoked.forEach((url) => URL.revokeObjectURL(url));
+      unsub();
     };
   }, []);
 
   return (
     <div className="flex justify-center items-center w-full sm:mt-10">
-      <div
-        className="grid gap-1 rounded border border-2 p-1 border-white max-w-sm sm:max-w-md lg:max-w-3xl"
-        style={{
-          gridTemplateColumns: `repeat(${columns}, 1fr)`,
-        }}
-      >
-        {imageUrls.map((_, i) => (
-          <Tile
-            key={`${codes[i]}-${i}`}
-            imageUrl={_}
-            code={codes[i]}
-            index={i}
-          />
-        ))}
+      <div className="inline-block relative">
+        <div
+          className="grid gap-1 rounded border border-2 p-1 border-white max-w-sm sm:max-w-md lg:max-w-3xl"
+          style={{
+            gridTemplateColumns: `repeat(${columns}, 1fr)`,
+          }}
+        >
+          {imageUrls.map((_, i) => (
+            <Tile
+              key={`${codes[i]}-${i}`}
+              imageUrl={_}
+              code={codes[i]}
+              index={i}
+            />
+          ))}
+        </div>
+        {win && (
+          <div className="absolute flex w-full h-full inset-0 rounded border border-white bg-gray-500/70 text-center items-center justify-center">
+            <h1 className="font-extrabold text-3xl text-white">YOU WON!</h1>
+          </div>
+        )}
       </div>
     </div>
   );
