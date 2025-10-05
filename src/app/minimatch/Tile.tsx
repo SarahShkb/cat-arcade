@@ -2,14 +2,12 @@ import { useState } from "react";
 import { TileType } from "./types";
 import { motion } from "framer-motion";
 import { useGameStore } from "./useGameStore";
-import { s } from "framer-motion/client";
 
 const Tile = ({ imageUrl, code, index }: TileType) => {
   const [isAnimating, setIsAnimating] = useState<boolean>(false);
   const { currentTileCode, flipped, found, currentTileIndex } = useGameStore();
-  console.log(flipped);
   const handleFlip = () => {
-    if (!found[code]) {
+    if (!found[code] && index !== currentTileIndex) {
       if (!isAnimating) {
         setIsAnimating(true);
         // first tile selected
@@ -17,8 +15,6 @@ const Tile = ({ imageUrl, code, index }: TileType) => {
           useGameStore.setState((state) => {
             const tempFlippedState = [...state.flipped];
             tempFlippedState[index] = true;
-
-            console.log(`first index added: ${index}`);
 
             return {
               ...state,
@@ -61,7 +57,6 @@ const Tile = ({ imageUrl, code, index }: TileType) => {
               useGameStore.setState((state) => {
                 const tempFlippedState = [...state.flipped];
                 tempFlippedState[index] = false;
-                console.log(`first tile index: ${state.currentTileIndex}`);
                 tempFlippedState[state.currentTileIndex] = false;
 
                 return {
@@ -87,7 +82,9 @@ const Tile = ({ imageUrl, code, index }: TileType) => {
         initial={false}
         animate={{ rotateY: flipped[index] ? 180 : 360 }}
         transition={{ duration: 0.3 }}
-        onAnimationComplete={() => setIsAnimating(false)}
+        onAnimationComplete={() => {
+          setIsAnimating(false);
+        }}
       >
         <div
           style={{ backgroundImage: "url(question-mark.svg)" }}

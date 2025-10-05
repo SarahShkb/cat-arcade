@@ -16,9 +16,24 @@ const MiniMatch = () => {
         <>
           <h2 className="text-center">Choose the difficulty!</h2>
           <div className="flex flex-col gap-4">
-            <button onClick={() => setDifficulty("EASY")}>Easy</button>
-            <button onClick={() => setDifficulty("MEDIUM")}>Medium</button>
-            <button onClick={() => setDifficulty("HARD")}>Hard</button>
+            <button
+              className="cursor-pointer"
+              onClick={() => setDifficulty("EASY")}
+            >
+              Easy
+            </button>
+            <button
+              className="cursor-pointer"
+              onClick={() => setDifficulty("MEDIUM")}
+            >
+              Medium
+            </button>
+            <button
+              className="cursor-pointer"
+              onClick={() => setDifficulty("HARD")}
+            >
+              Hard
+            </button>
           </div>
         </>
       ) : (

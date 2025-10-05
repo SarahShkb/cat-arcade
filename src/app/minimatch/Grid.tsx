@@ -51,14 +51,16 @@ const Grid = ({ difficulty }: GridType) => {
       const url = `${baseImageUrl}${
         exsistingCatImageIndexes[imageNumber] + 1
       }.svg`;
+      const tileCode = exsistingCatImageIndexes[imageNumber] + 1;
       exsistingCatImageIndexes.splice(imageNumber, 1);
-      return { url, code: exsistingCatImageIndexes[imageNumber] + 1 };
+      return { url, code: tileCode };
     };
 
     const assignCatImage = async () => {
       await Promise.all(
         Array.from({ length: tilesNum / 2 }, async () => {
           const { url, code } = await getCatImage(exsistingCatImageIndexes);
+
           assignTwoRandomTiles(
             url,
             code,
@@ -88,7 +90,12 @@ const Grid = ({ difficulty }: GridType) => {
         }}
       >
         {imageUrls.map((_, i) => (
-          <Tile key={i} imageUrl={_} code={codes[i]} index={i} />
+          <Tile
+            key={`${codes[i]}-${i}`}
+            imageUrl={_}
+            code={codes[i]}
+            index={i}
+          />
         ))}
       </div>
     </div>

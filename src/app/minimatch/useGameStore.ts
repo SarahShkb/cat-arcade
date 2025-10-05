@@ -11,7 +11,7 @@ export const useGameStore = create<GameStateType>()(
         setTilesNum: (num: number) => set({
             tilesNum: num,
             flipped: Array(num).fill(false),
-            found: Array(num/2).fill(false),
+            found: Array(Math.floor(num/2)).fill(false),
         })
       }),
 )
