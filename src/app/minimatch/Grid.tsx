@@ -84,7 +84,9 @@ const Grid = ({ difficulty }: GridType) => {
       (state) => state.found,
       (newFound: MatchFoundStateDict[]) => {
         if (newFound.length > 0 && newFound.every((item) => item.found)) {
-          useGameStore.getState().setWin();
+          setTimeout(() => {
+            useGameStore.getState().setWin();
+          }, 600);
         }
       },
       {

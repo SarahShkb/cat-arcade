@@ -6,8 +6,9 @@ import { useGameStore } from "./useGameStore";
 const Tile = ({ imageUrl, code, index }: TileType) => {
   const [isAnimating, setIsAnimating] = useState<boolean>(false);
   const { currentTileCode, flipped, found, currentTileIndex } = useGameStore();
+  const isCurrentCodeFound = found.find((item) => item.code === code)?.found;
   const handleFlip = () => {
-    if (!found[code] && index !== currentTileIndex) {
+    if (!isCurrentCodeFound && index !== currentTileIndex) {
       if (!isAnimating) {
         setIsAnimating(true);
         // first tile selected
