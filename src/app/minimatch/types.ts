@@ -1,4 +1,4 @@
-export type DifficultyType = "EASY" | "MEDIUM" | "HARD" | null;
+export type DifficultyType = "SUPER_EASY" | "EASY" | "MEDIUM" | "HARD" | null;
 
 export type GridType = {
     difficulty: DifficultyType;
@@ -10,13 +10,18 @@ export type TileType = {
     index: number;
 }
 
+export type MatchFoundStateDict = {
+    code: number,
+    found: boolean
+}
+
 export type GameStateType = {
     win: boolean;
     tilesNum: number;
     flipped : boolean[];
-    found : boolean[];
+    found : MatchFoundStateDict[];
     currentTileIndex: number;
     currentTileCode: number;
-    setTilesNum: (num: number) => void,
+    setInitState: (num: number, codesDics: MatchFoundStateDict[]) => void,
     setWin: () => void
 }

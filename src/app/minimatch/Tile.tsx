@@ -29,15 +29,19 @@ const Tile = ({ imageUrl, code, index }: TileType) => {
           if (code === currentTileCode) {
             useGameStore.setState((state) => {
               const tempFoundState = [...state.found];
-              tempFoundState[code] = true;
+              tempFoundState.forEach((item) => {
+                if (item.code === currentTileCode) {
+                  item.found = true;
+                }
+              });
 
               const tempFlippedState = [...state.flipped];
               tempFlippedState[index] = true;
 
               return {
                 ...state,
-                found: tempFoundState,
-                flipped: tempFlippedState,
+                found: [...tempFoundState],
+                flipped: [...tempFlippedState],
                 currentTileCode: -1,
                 currentTileIndex: -1,
               };

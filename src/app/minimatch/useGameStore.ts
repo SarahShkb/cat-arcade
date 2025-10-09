@@ -1,19 +1,21 @@
 import {create} from 'zustand'
-import { GameStateType } from './types'
+import { subscribeWithSelector } from 'zustand/middleware'
+import { GameStateType, MatchFoundStateDict } from './types'
 
 export const useGameStore = create<GameStateType>()(
-      (set) => ({
-        tilesNum: 0,
-        flipped : [], 
-        found : [], 
-        currentTileCode: -1,
-        currentTileIndex: -1,
-        win: false,
-        setTilesNum: (num: number) => set({
-            tilesNum: num,
-            flipped: Array(num).fill(false),
-            found: Array(Math.floor(num/2)).fill(false),
-        }),
-        setWin: () => set({ win: true})
-      }),
-)
+  subscribeWithSelector((set) => ({
+    tilesNum: 0,
+    flipped: [], 
+    found: [], 
+    currentTileCode: -1,
+    currentTileIndex: -1,
+    win: false,
+    setInitState: (num: number, codesDics: MatchFoundStateDict[]) => {
+      set({
+      tilesNum: num,
+      flipped: Array(num).fill(false),
+      found: codesDics
+    })},
+    setWin: () => set({ win: true })
+  }))
+);

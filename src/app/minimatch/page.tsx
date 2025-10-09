@@ -18,6 +18,12 @@ const MiniMatch = () => {
           <div className="flex flex-col gap-4">
             <button
               className="cursor-pointer"
+              onClick={() => setDifficulty("SUPER_EASY")}
+            >
+              Super Easy
+            </button>
+            <button
+              className="cursor-pointer"
               onClick={() => setDifficulty("EASY")}
             >
               Easy

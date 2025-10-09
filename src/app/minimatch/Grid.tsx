@@ -2,7 +2,7 @@
 import { useEffect, useState } from "react";
 import { difficultyLevelSize } from "./constants";
 import Tile from "./Tile";
-import { GridType } from "./types";
+import { GridType, MatchFoundStateDict } from "./types";
 import { useGameStore } from "./useGameStore";
 
 const Grid = ({ difficulty }: GridType) => {
@@ -20,7 +20,8 @@ const Grid = ({ difficulty }: GridType) => {
     code: number,
     indexes: number[],
     tempImageUrls: string[],
-    catImageCodes: number[]
+    catImageCodes: number[],
+    codesDics: MatchFoundStateDict[]
   ) => {
     // first match
     const index1 = Math.floor(Math.random() * indexes.length);
@@ -32,16 +33,18 @@ const Grid = ({ difficulty }: GridType) => {
     tempImageUrls[indexes[index2]] = url;
     catImageCodes[indexes[index2]] = code;
     indexes.splice(index2, 1);
+
+    codesDics.push({ code, found: false });
   };
 
   useEffect(() => {
     useGameStore.setState({ tilesNum });
-    useGameStore.getState().setTilesNum(tilesNum);
     const tempImageUrls: string[] = new Array(tilesNum);
     const urlsToBeRevoked: string[] = [];
     const indexes = Array.from(Array(tilesNum).keys());
     const exsistingCatImageIndexes = Array.from(Array(allImagesNum).keys());
     const catImageCodes: number[] = [];
+    const codesDics: MatchFoundStateDict[] = [];
 
     const getCatImage = async (exsistingCatImageIndexes: number[]) => {
       const baseImageUrl = `cat-images/cat-`;
@@ -66,21 +69,26 @@ const Grid = ({ difficulty }: GridType) => {
             code,
             indexes,
             tempImageUrls,
-            catImageCodes
+            catImageCodes,
+            codesDics
           );
         })
       );
       setImageUrls([...tempImageUrls]);
       setCodes([...catImageCodes]);
+      useGameStore.getState().setInitState(tilesNum, codesDics);
     };
     assignCatImage();
 
     const unsub = useGameStore.subscribe(
       (state) => state.found,
-      (newFound: boolean[]) => {
-        if (newFound.every(Boolean)) {
-          useState.getState().setWin();
+      (newFound: MatchFoundStateDict[]) => {
+        if (newFound.length > 0 && newFound.every((item) => item.found)) {
+          useGameStore.getState().setWin();
         }
+      },
+      {
+        fireImmediately: true,
       }
     );
 
